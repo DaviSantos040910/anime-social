@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nova Postagem | AnimeSocial{% endblock %}
+
+{% block content %}
+  <div class="form-container">
+    <h1>✨ Nova Postagem</h1>
+
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="titulo">Título:</label>
+        <input type="text" name="titulo" id="titulo" required>
+      </div>
+
+      <div class="form-group">
+        <label for="descricao">Descrição:</label>
+        <textarea name="descricao" id="descricao" rows="4" style="width: 100%; border-radius: 8px;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="imagem">Imagem:</label>
+        <input type="file" name="imagem" id="imagem" required>
+      </div>
+
+      <button type="submit" class="btn-save">Publicar</button>
+    </form>
+  </div>
+{% endblock %}

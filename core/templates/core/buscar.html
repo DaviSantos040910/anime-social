@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buscar | AnimeSocial{% endblock %}
+
+{% block content %}
+  <div class="page-title">
+    <h1>🔍 Resultados da Busca</h1>
+    {% if query %}
+      <p>Você buscou por: <strong>{{ query }}</strong></p>
+    {% else %}
+      <p>Digite um termo para buscar postagens.</p>
+    {% endif %}
+  </div>
+
+  <div class="post-gallery">
+    {% for post in resultados %}
+      <div class="post-card">
+        <img src="{{ post.imagem.url }}" alt="{{ post.titulo }}" class="post-img"/>
+        <div class="post-content">
+          <h3>{{ post.titulo }}</h3>
+          <p>{{ post.descricao|truncatewords:15 }}</p>
+          <p><small>❤️ {{ post.total_curtidas }} • {{ post.criado_em|date:"d/m/Y" }}</small></p>
+          <a href="{% url 'perfil' post.usuario.username %}" class="ver-perfil">Ver perfil</a>
+          <form method="post" action="{% url 'curtir_post' %}" class="curtir-form" data-post-id="{{ post.id }}">
+        {% csrf_token %}
+        <button type="submit" class="curtir-btn">
+         {% if user in post.curtidas.all %}
+             ❤️
+         {% else %}
+             🤍
+         {% endif %}
+  </button>
+  <span class="contador-curtidas">{{ post.total_curtidas }}</span>
+</form>
+</div>
+      </div>
+    {% empty %}
+      <p>Nenhuma postagem encontrada.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

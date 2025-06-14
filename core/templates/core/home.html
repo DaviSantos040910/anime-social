@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Página Inicial | AnimeSocial{% endblock %}
+
+{% block content %}
+  <h1>Bem-vindo(a), <a href="{% url 'perfil' request.user.username %}">{{ request.user.username }}</a>!</h1>
+  <p>Você está logado no AnimeSocial.</p>
+{% endblock %}

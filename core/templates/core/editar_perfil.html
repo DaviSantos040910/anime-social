@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Editar Perfil | AnimeSocial{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/editar_perfil.css' %}">
+<script src="{% static 'core/js/mensagens.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+  <h1>Editar Perfil</h1>
+
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="message {{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="edit-form">
+    {% csrf_token %}
+    <div class="form-group">{{ user_form.username.label_tag }} {{ user_form.username }}</div>
+    <div class="form-group">{{ user_form.email.label_tag }} {{ user_form.email }}</div>
+    <div class="form-group">
+      {{ profile_form.avatar.label_tag }} {{ profile_form.avatar }}
+      <div class="avatar-preview-wrapper">
+        <img id="avatar-preview" src="{% if request.user.profile.avatar %}{{ request.user.profile.avatar.url }}{% endif %}" alt="Preview do Avatar" class="avatar-preview" {% if not request.user.profile.avatar %}style="display:none;"{% endif %} />
+        <button type="button" id="remove-avatar" class="remove-avatar-btn" {% if not request.user.profile.avatar %}style="display:none;"{% endif %}>Remover Avatar</button>
+        <input type="hidden" name="remover_avatar" id="remover-avatar-input" value="false">
+      </div>
+    </div>
+    <div class="form-group">{{ profile_form.bio.label_tag }} {{ profile_form.bio }}</div>
+    <button type="submit" class="btn-save">Salvar Alterações</button>
+  </form>
+  <a href="{% url 'perfil' username=request.user.username %}" class="back-link">← Voltar ao perfil</a>
+</div>
+{% endblock %}
