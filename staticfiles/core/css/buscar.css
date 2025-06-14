@@ -1,0 +1,53 @@
+.search-container {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 700px;
+  margin: auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#campoBusca {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+#resultadosBusca h3 {
+  margin-top: 1.5rem;
+  color: #ff4081;
+}
+
+#resultadosBusca ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+#resultadosBusca ul li {
+  margin-bottom: 0.5rem;
+}
+
+.post-resultados {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.postagem-item {
+  display: flex;
+  gap: 1rem;
+  background: #fff0f5;
+  padding: 0.8rem;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.postagem-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}

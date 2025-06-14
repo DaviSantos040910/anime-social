@@ -8,6 +8,8 @@ from .forms import UserForm, ProfileForm
 from .models import Profile
 from django.db.models import Q
 from .models import Post 
+from django.http import JsonResponse
+from .models import Post
 
 
 def login_view(request):
@@ -152,3 +154,31 @@ def curtir_post(request):
             'total_curtidas': post.total_curtidas()
         })
     return JsonResponse({'erro': 'Requisição inválida.'}, status=400)
+
+def buscar_ajax(request):
+    termo = request.GET.get('q', '').strip()
+    posts = Post.objects.filter(titulo__icontains=termo)[:10]
+    usuarios = User.objects.filter(username__icontains=termo)[:10]
+
+    postagens_resultado = [
+        {
+            'id': p.id,
+            'titulo': p.titulo,
+            'descricao': p.descricao[:80],
+            'imagem': p.imagem.url,
+            'usuario': p.usuario.username,
+            'total_curtidas': p.total_curtidas,
+        } for p in posts
+    ]
+
+    usuarios_resultado = [
+        {
+            'id': u.id,
+            'username': u.username,
+        } for u in usuarios
+    ]
+
+    return JsonResponse({
+        'postagens': postagens_resultado,
+        'usuarios': usuarios_resultado,
+    })

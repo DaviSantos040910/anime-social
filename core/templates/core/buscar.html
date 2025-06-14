@@ -3,40 +3,57 @@
 
 {% block title %}Buscar | AnimeSocial{% endblock %}
 
-{% block content %}
-  <div class="page-title">
-    <h1>🔍 Resultados da Busca</h1>
-    {% if query %}
-      <p>Você buscou por: <strong>{{ query }}</strong></p>
-    {% else %}
-      <p>Digite um termo para buscar postagens.</p>
-    {% endif %}
-  </div>
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'core/css/busca.css' %}">
+{% endblock %}
 
-  <div class="post-gallery">
-    {% for post in resultados %}
-      <div class="post-card">
-        <img src="{{ post.imagem.url }}" alt="{{ post.titulo }}" class="post-img"/>
-        <div class="post-content">
-          <h3>{{ post.titulo }}</h3>
-          <p>{{ post.descricao|truncatewords:15 }}</p>
-          <p><small>❤️ {{ post.total_curtidas }} • {{ post.criado_em|date:"d/m/Y" }}</small></p>
-          <a href="{% url 'perfil' post.usuario.username %}" class="ver-perfil">Ver perfil</a>
-          <form method="post" action="{% url 'curtir_post' %}" class="curtir-form" data-post-id="{{ post.id }}">
-        {% csrf_token %}
-        <button type="submit" class="curtir-btn">
-         {% if user in post.curtidas.all %}
-             ❤️
-         {% else %}
-             🤍
-         {% endif %}
-  </button>
-  <span class="contador-curtidas">{{ post.total_curtidas }}</span>
-</form>
+{% block content %}
+<div class="search-container">
+  <input type="text" id="campoBusca" placeholder="Buscar por postagens ou usuários...">
+  <div id="resultadosBusca"></div>
 </div>
-      </div>
-    {% empty %}
-      <p>Nenhuma postagem encontrada.</p>
-    {% endfor %}
-  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('campoBusca').addEventListener('input', function() {
+  const query = this.value.trim();
+  if (query.length === 0) {
+    document.getElementById('resultadosBusca').innerHTML = '';
+    return;
+  }
+
+  fetch(`/ajax/buscar/?q=${query}`)
+    .then(response => response.json())
+    .then(data => {
+      let html = '';
+
+      if (data.usuarios.length > 0) {
+        html += '<h3>Usuários</h3><ul>';
+        data.usuarios.forEach(u => {
+          html += `<li><a href="/perfil/${u.username}/">@${u.username}</a></li>`;
+        });
+        html += '</ul>';
+      }
+
+      if (data.postagens.length > 0) {
+        html += '<h3>Postagens</h3><div class="post-resultados">';
+        data.postagens.forEach(p => {
+          html += `
+            <div class="postagem-item">
+              <img src="${p.imagem}" alt="${p.titulo}">
+              <div>
+                <h4>${p.titulo}</h4>
+                <p>${p.descricao}...</p>
+                <p><small>❤️ ${p.total_curtidas} — <a href="/perfil/${p.usuario}/">@${p.usuario}</a></small></p>
+              </div>
+            </div>`;
+        });
+        html += '</div>';
+      }
+
+      document.getElementById('resultadosBusca').innerHTML = html || '<p>Nenhum resultado encontrado.</p>';
+    });
+});
+</script>
 {% endblock %}
